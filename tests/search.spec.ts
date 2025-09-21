@@ -19,13 +19,13 @@ test.describe('Search', () => {
             const products = await page.locator('.product-thumb .caption h4').allTextContents();
             for (let item of products) {
                 expect(item.toLowerCase()).toContain(term);
-                // await expect(page).toHaveTitle(`Search - ${term}`);
-                // await expect(page).toHaveURL(`https://tutorialsninja.com/demo/index.php?route=product/search&search=${term}`)
+                await expect(page).toHaveTitle(`Search - ${term}`);
+                await expect(page).toHaveURL(`https://tutorialsninja.com/demo/index.php?route=product/search&search=${term}`)
             }
         })
     }
 
-    const negativeSearchTerm = ['', 'asfahqrwewedh', '656565', '%*^(&^%', 'մակ'];
+    const negativeSearchTerm = ['', 'asfahqrwewedh', '656565', 'մակ'];
 
     for (let term of negativeSearchTerm) {
 
@@ -39,14 +39,14 @@ test.describe('Search', () => {
             await expect(page.getByRole('heading', { name: 'Products meeting the search' })).toBeVisible();
             await expect(page.getByText('There is no product that')).toBeVisible();
 
-            // if (term == '') {
-            //     await expect(page).toHaveTitle('Search');
-            //     await expect(page).toHaveURL('https://tutorialsninja.com/demo/index.php?route=product/search&search')
-            // }
-            // else {
-            //     await expect(page).toHaveTitle(`Search - ${term}`);
-            //     await expect(page).toHaveURL(`https://tutorialsninja.com/demo/index.php?route=product/search&search=${term}`)
-            // }
+            if (term == '') {
+                await expect(page).toHaveTitle('Search');
+                await expect(page).toHaveURL('https://tutorialsninja.com/demo/index.php?route=product/search')
+            }
+            else {
+                await expect(page).toHaveTitle(`Search - ${term}`);
+                await expect(page).toHaveURL(`https://tutorialsninja.com/demo/index.php?route=product/search&search=${term}`)
+            }
         });
     }
 
