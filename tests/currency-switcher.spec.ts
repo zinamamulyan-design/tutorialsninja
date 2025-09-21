@@ -37,7 +37,7 @@ test.describe('Currency Switcher functionality', () => {
 
     });
 
-    ('Currency persists after page reload', async({ page })=>{
+    test('Currency persists after page reload', async({ page })=>{
 
         await page.getByRole('button', { name: '$ Currency' }).click();
         await page.getByRole('button', { name: '€Euro' }).click()
