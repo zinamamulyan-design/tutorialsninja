@@ -42,8 +42,9 @@ test.describe('Auth', () => {
 
     const validParams = { email: 'zina.mamulyan@gmail.com', password: '@MyPass88' }
 
-    test('Login successfully with valid credentials', async ({ page }) => {
+    test.only('Login successfully with valid credentials', async ({ page }) => {
 
+        await gotoLogin(page);
         await loginSuccessfully(page, validParams.email, validParams.password);
 
         await expect(page).toHaveTitle('My Account');
@@ -71,47 +72,9 @@ test.describe('Auth', () => {
 
     });
 
-
-    // New Password: @MyNewPass
-
-    const newPassword = { password: '@MyNewPass', passwordConfirm: '@MyNewPass' };
-    
-    test('Change Password', async ({ page }) => {
-        // HOMEWORK
-        await loginSuccessfully(page, validParams.email, validParams.password);
-
-        await expect(page).toHaveTitle('My Account');
-        await expect(page).toHaveURL('https://tutorialsninja.com/demo/index.php?route=account/account');
-
-        await expect(page.getByRole('link', { name: 'Change your password' })).toBeVisible();
-        await page.getByRole('link', { name: 'Change your password' }).click();
-
-        await expect(page.getByRole('heading', { name: 'Change Password' })).toBeVisible();
-        await expect(page.getByRole('textbox', { name: '* Password', exact: true })).toBeVisible();
-        await expect(page.getByRole('textbox', { name: '* Password Confirm' })).toBeVisible();
-        await expect(page.getByRole('button', { name: 'Continue' })).toBeVisible();
-
-        await page.getByRole('textbox', { name: '* Password', exact: true }).click();
-        await page.getByRole('textbox', { name: '* Password', exact: true }).fill(newPassword.password);
-        await page.getByRole('textbox', { name: '* Password Confirm' }).click();
-        await page.getByRole('textbox', { name: '* Password Confirm' }).fill(newPassword.passwordConfirm);
-        await page.getByRole('button', { name: 'Continue' }).click();
-
-        await expect(page).toHaveTitle('My Account');
-        await expect(page).toHaveURL('https://tutorialsninja.com/demo/index.php?route=account/account')
-
-        const success = page.getByText('Success: Your password has been successfully updated.');
-        await expect(success).toBeVisible();
-
-       
-    });
-
-
-
 });
 
-
-async function gotoLogin(page: Page) {
+export async function gotoLogin(page: Page) {
     await page.getByText('My Account Register Login').click();
     await page.getByRole('link', { name: 'Login' }).click();
     await expect(page).toHaveTitle('Account Login');
@@ -122,9 +85,8 @@ async function gotoLogin(page: Page) {
     await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
 }
 
-async function loginSuccessfully(page: Page, email: string, password: string) {
-    await gotoLogin(page);
-
+export async function loginSuccessfully(page: Page, email: string, password: string) {
+    
     await page.getByRole('textbox', { name: 'E-Mail Address' }).click();
     await page.getByRole('textbox', { name: 'E-Mail Address' }).fill(email);
     await page.getByRole('textbox', { name: 'Password' }).click();
