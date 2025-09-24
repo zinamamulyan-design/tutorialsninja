@@ -42,7 +42,7 @@ test.describe('Auth', () => {
 
     const validParams = { email: 'zina.mamulyan@gmail.com', password: '@MyPass88' }
 
-    test.only('Login successfully with valid credentials', async ({ page }) => {
+    test('Login successfully with valid credentials', async ({ page }) => {
 
         await loginSuccessfully(page, validParams.email, validParams.password);
 
@@ -73,7 +73,10 @@ test.describe('Auth', () => {
 
 
     // New Password: @MyNewPass
-    test(`Change Password`, async ({ page }) => {
+
+    const newPassword = { password: '@MyNewPass', passwordConfirm: '@MyNewPass' };
+    
+    test('Change Password', async ({ page }) => {
         // HOMEWORK
         await loginSuccessfully(page, validParams.email, validParams.password);
 
@@ -82,20 +85,25 @@ test.describe('Auth', () => {
 
         await expect(page.getByRole('link', { name: 'Change your password' })).toBeVisible();
         await page.getByRole('link', { name: 'Change your password' }).click();
-        
+
         await expect(page.getByRole('heading', { name: 'Change Password' })).toBeVisible();
         await expect(page.getByRole('textbox', { name: '* Password', exact: true })).toBeVisible();
         await expect(page.getByRole('textbox', { name: '* Password Confirm' })).toBeVisible();
         await expect(page.getByRole('button', { name: 'Continue' })).toBeVisible();
-        
+
         await page.getByRole('textbox', { name: '* Password', exact: true }).click();
-        await page.getByRole('textbox', { name: '* Password', exact: true }).fill('@MyNewPass');
+        await page.getByRole('textbox', { name: '* Password', exact: true }).fill(newPassword.password);
         await page.getByRole('textbox', { name: '* Password Confirm' }).click();
-        await page.getByRole('textbox', { name: '* Password Confirm' }).fill('@MyNewPass');
+        await page.getByRole('textbox', { name: '* Password Confirm' }).fill(newPassword.passwordConfirm);
         await page.getByRole('button', { name: 'Continue' }).click();
-        await page.getByText('Success: Your password has').click();
 
+        await expect(page).toHaveTitle('My Account');
+        await expect(page).toHaveURL('https://tutorialsninja.com/demo/index.php?route=account/account')
 
+        const success = page.getByText('Success: Your password has been successfully updated.');
+        await expect(success).toBeVisible();
+
+       
     });
 
 
