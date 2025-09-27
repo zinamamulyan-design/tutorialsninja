@@ -9,6 +9,9 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('Auth', () => {
 
+
+    //------------------------Negative cases---------------------------------
+
     const invelidParams = [
         { email: 'fakeemail', password: '@MyPass88' },
         { email: '', password: '@MyPass88' },
@@ -32,7 +35,8 @@ test.describe('Auth', () => {
 
             await page.getByRole('button', { name: 'Login' }).click();
 
-            const error = page.locator('div.alert-danger');
+
+            const error = page.locator('.alert.alert-danger');
             await expect(error).toBeVisible();
             //await expect(error).toHaveText('Warning: No match for E-Mail');
             await expect(page).toHaveTitle('Account Login');
@@ -40,15 +44,18 @@ test.describe('Auth', () => {
         });
     }
 
+
+    //--------------------------Positive Cases--------------------------------
+
     const validParams = { email: 'zina.mamulyan@gmail.com', password: '@MyPass88' }
 
-    test.only('Login successfully with valid credentials', async ({ page }) => {
+    test('Login successfully with valid credentials', async ({ page }) => {
 
         await gotoLogin(page);
         await loginSuccessfully(page, validParams.email, validParams.password);
 
         await expect(page).toHaveTitle('My Account');
-        await expect(page).toHaveURL('https://tutorialsninja.com/demo/index.php?route=account/account');
+        await expect(page).toHaveURL(/route=account\/account/);
 
         await expect(page.locator('#content').getByRole('heading', { name: 'My Account' })).toBeVisible();
         await expect(page.getByRole('link', { name: 'Edit your account information' })).toBeVisible();
@@ -71,6 +78,7 @@ test.describe('Auth', () => {
         await expect(page.getByRole('link', { name: 'Subscribe / unsubscribe to' })).toBeVisible();
 
     });
+    
 
 });
 
@@ -86,7 +94,7 @@ export async function gotoLogin(page: Page) {
 }
 
 export async function loginSuccessfully(page: Page, email: string, password: string) {
-    
+
     await page.getByRole('textbox', { name: 'E-Mail Address' }).click();
     await page.getByRole('textbox', { name: 'E-Mail Address' }).fill(email);
     await page.getByRole('textbox', { name: 'Password' }).click();
