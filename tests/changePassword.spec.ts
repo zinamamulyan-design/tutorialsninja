@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
     await page.goto('https://tutorialsninja.com/demo/index.php?route=common/home');
 });
 
-test.describe.only('Change Password', () => {
+test.describe('Change Password', () => {
 
     // New Password: @MyNewPass
 
