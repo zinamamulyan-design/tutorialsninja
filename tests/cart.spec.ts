@@ -55,6 +55,7 @@ test.describe.only('Add to Cart, Cart, and View Cart tests from Homepage', () =>
 
             const cartTotal = page.locator('#cart-total');
             const expectedTotal = (Number(macBookPrice.replace(',', '')) * (i + 1)).toLocaleString();
+        
             console.log(expectedTotal);
             
 
