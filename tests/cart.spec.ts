@@ -5,22 +5,71 @@ test.beforeEach(async ({ page }) => {
     await page.goto('https://tutorialsninja.com/demo/index.php?route=common/home');
 });
 
-test.describe.only('Cart', () => {
+test.describe.only('Add to Cart, Cart, and View Cart tests from Homepage', () => {
 
-    
-    const products = [
-        {productName: 'MacBook', price: '$602.00'},
-        {productName: 'iPhone', price: '$123.20'}
-    ]
-for(const {productName, price} of products)
-test(`Add ${productName} to cart from home`, async({ page} )=>{
 
-    const cartTotal = await page.locator('#cart-total').textContent();
-    expect(cartTotal).toContain('0 item(s) - $0.00');
-    
-    
+    test('Add MacBook to cart and verify cart', async ({ page }) => {
 
-});
+        //Get Product
+        const products = await page.locator('.product-thumb .caption h4').allTextContents();
+        const MacBook = products[0];
+
+        //Get Product Price
+        const prices = await page.locator('.price').allTextContents();
+        const macBookPrice = prices[0].slice(0, 8);
+
+
+        await page.getByRole('button', { name: ' Add to Cart' }).first().click();
+        await expect(page.getByText('Success: You have added')).toContainText(MacBook);
+
+        const cartTotal = page.locator('#cart-total');
+
+        await expect(cartTotal).toContainText('1 item(s)');
+        await expect(cartTotal).toContainText(macBookPrice);
+
+        await cartTotal.click();
+        await expect(page.locator('#cart').getByText(MacBook)).toBeVisible();
+        await expect(page.getByRole('cell', { name: 'x1' })).toContainText('x1');
+        await expect(page.getByRole('cell', { name: '$' }).first()).toHaveText(macBookPrice);
+        await expect(page.locator('#cart div').getByRole('cell', { name: '$602.00' })).toHaveText(macBookPrice);
+
+    });
+
+
+    test('Add MacBook twice and verify quantity and price', async ({ page }) => {
+
+        //Get Product
+        const products = await page.locator('.product-thumb .caption h4').allTextContents();
+        const MacBook = products[0];
+
+        //Get Product Price
+        const prices = await page.locator('.price').allTextContents();
+        const macBookPrice = prices[0].slice(1, 8);
+
+        
+
+        for (let i = 0; i < 2; i++) {
+
+            await page.getByRole('button', { name: ' Add to Cart' }).first().click();
+            await expect(page.getByText('Success: You have added')).toContainText(MacBook);
+
+            const cartTotal = page.locator('#cart-total');
+            const expectedTotal = (Number(macBookPrice.replace(',', '')) * (i + 1)).toLocaleString();
+            console.log(expectedTotal);
+            
+
+            await expect(cartTotal).toContainText(`${i + 1} item(s)`);
+            await expect(cartTotal).toContainText(expectedTotal);
+
+            await cartTotal.click();
+            await expect(page.locator('#cart').getByText(MacBook)).toBeVisible();
+            await expect(page.getByRole('cell', { name: 'x1' })).toContainText(`x${i+1}`);
+            await expect(page.getByRole('cell', { name: '$' }).first()).toContainText(expectedTotal);
+            await expect(page.locator('#cart div').getByRole('cell', { name: '$602.00' })).toContainText(String(Number(macBookPrice) * (i + 1)));
+
+        }
+
+    });
 
 
 });
